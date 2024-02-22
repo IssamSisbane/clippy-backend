@@ -1,13 +1,10 @@
 import { app, HttpRequest, HttpResponseInit, InvocationContext } from "@azure/functions";
 import CosmosDBClient from "../cosmosDBClient";
-import { Clip } from "../models/clip";
 
 export async function getClip(request: HttpRequest, context: InvocationContext): Promise<HttpResponseInit> {
-    context.log(`Http function processed request for url "${request.url}"`);
+    context.log(`Starting the clip finding...`);
 
-    //const name = request.query.get('name') || await request.text() || 'world';
-
-    const path = request.query.get('path');
+    const path = request.params.path;
 
 
     if (!path) {
@@ -20,8 +17,6 @@ export async function getClip(request: HttpRequest, context: InvocationContext):
     const cosmosDBClient = new CosmosDBClient();
     const result = await cosmosDBClient.container.items.query('SELECT * FROM c WHERE c.path = "' + path + '"').fetchAll();
 
-    // const result = await cosmosDBClient.container.items.readAll().fetchAll();
-
     if (result.resources.length === 0) {
         return {
             status: 404,
@@ -29,13 +24,16 @@ export async function getClip(request: HttpRequest, context: InvocationContext):
         };
     }
 
+    context.log(`Clip found...`);
+
     return {
-        body: JSON.stringify(result.resources[0])
+        jsonBody: result.resources[0]
     };
 };
 
 app.http('getClip', {
     methods: ['GET'],
     authLevel: 'anonymous',
+    route: 'clip/get/{path}',
     handler: getClip
 });

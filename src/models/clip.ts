@@ -1,13 +1,13 @@
 export enum TttEnum {
-    "1d" = "1d",
-    "7d" = "7d",
-    "30d" = "30d",
+    Day = "1d",
+    Week = "7d",
+    Month = "30d",
 }
 
 export enum ClipTypeEnum {
-    "text" = "text",
-    "image" = "image",
-    "file" = "file",
+    Text = "text",
+    Image = "image",
+    File = "file",
 }
 
 export interface Clip {
@@ -15,5 +15,13 @@ export interface Clip {
     title: string,
     content: string,
     type: ClipTypeEnum,
-    ttll: TttEnum,
+    timeToLive: TttEnum,
+}
+
+export function verifyClip(object: any): boolean {
+    return object.path !== undefined
+        && object.title !== undefined
+        && object.content !== undefined
+        && object.type !== undefined
+        && object.timeToLive !== undefined;
 }
