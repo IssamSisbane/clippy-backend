@@ -30,7 +30,7 @@ export async function addClip(request: HttpRequest, context: InvocationContext):
     await cosmosDBClient.container.items.upsert(clip);
 
     context.log(`New clip created...`);
-    return { body: `Clip added to path ${clip.path}` };
+    return { jsonBody: clip };
 };
 
 function readAnimalsJsonFileSync() {
