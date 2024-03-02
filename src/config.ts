@@ -1,7 +1,6 @@
-
-const config = {
-    cosmos_db_endpoint: process.env.COSMOS_DB_ENDPOINT,
-    cosmos_db_key: process.env.COSMOS_DB_KEY,
-}
-
-export default config;
+export const {
+    COSMOS_DB_ENDPOINT,
+    COSMOS_DB_KEY,
+    AZURE_STORAGE_ACCOUNT_NAME,
+    AZURE_STORAGE_ACCOUNT_KEY,
+} = process.env;
