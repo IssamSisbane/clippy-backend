@@ -11,7 +11,7 @@ export async function addClip(request: HttpRequest, context: InvocationContext):
     if (!verifyClip(body)) {
         return {
             status: 400,
-            body: "Please pass a path, title, content, type and timeToLive in the request body"
+            body: "Please pass a path, title, content, type and ttl in the request body"
         };
     }
 

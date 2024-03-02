@@ -34,7 +34,8 @@ export async function uploadBlob(
     serviceKey: string,
     fileName: string,
     containerName: string,
-    blob: Buffer
+    blob: Buffer,
+    ttl: number
 ): Promise<String> {
     if (!serviceName || !serviceKey || !fileName || !containerName || !blob) {
         throw new Error('Upload function missing parameters');
@@ -60,7 +61,7 @@ export async function uploadBlob(
 }
 
 // Create a service SAS for a blob
-export async function getBlobSasUri(containerClient, blobName, serviceName, serviceKey) {
+export async function getBlobSasUri(containerClient, blobName, serviceName, serviceKey, ttl = 3600) {
     const sharedKeyCredential = new StorageSharedKeyCredential(
         serviceName,
         serviceKey
@@ -70,7 +71,7 @@ export async function getBlobSasUri(containerClient, blobName, serviceName, serv
         containerName: containerClient.containerName,
         blobName: blobName,
         startsOn: new Date(),
-        expiresOn: new Date(new Date().valueOf() + 3600 * 1000),
+        expiresOn: new Date(new Date().valueOf() + ttl * 1000),
         permissions: BlobSASPermissions.parse("r")
     };
 
@@ -78,4 +79,25 @@ export async function getBlobSasUri(containerClient, blobName, serviceName, serv
     console.log(`SAS token for blob is: ${sasToken}`);
 
     return `${containerClient.getBlockBlobClient(blobName).url}?${sasToken}`;
+}
+
+// deleteBlob function
+export async function deleteBlob(
+    serviceName: string,
+    serviceKey: string,
+    containerName: string,
+    blobName: string
+): Promise<void> {
+    if (!serviceName || !serviceKey || !containerName || !blobName) {
+        throw new Error('Delete function missing parameters');
+    }
+
+    try {
+        const blobServiceClient = getBlobServiceClient(serviceName, serviceKey);
+        const containerClient = blobServiceClient.getContainerClient(containerName);
+        const blobClient = containerClient.getBlobClient(blobName);
+        await blobClient.delete();
+    } catch (error) {
+        throw error;
+    }
 }
