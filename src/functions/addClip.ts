@@ -1,7 +1,7 @@
 import { app, HttpRequest, HttpResponseInit, InvocationContext } from "@azure/functions";
-import CosmosDBClient from "../cosmosDBClient";
+import CosmosDBClient from "../helpers/cosmosDBClient";
 import { Clip, verifyClip } from "../models/clip";
-import * as fs from 'fs';
+import { PatchOperation } from "@azure/cosmos";
 
 export async function addClip(request: HttpRequest, context: InvocationContext): Promise<HttpResponseInit> {
     context.log(`Starting the clip creation...`);
@@ -18,33 +18,18 @@ export async function addClip(request: HttpRequest, context: InvocationContext):
     const clip = body as Clip;
     const cosmosDBClient = new CosmosDBClient();
 
-    // get a random unused animal
-    context.log(`Finding an unused animal..."`);
-    const items = await cosmosDBClient.container.items.readAll().fetchAll();
-    const usableAnimals = getUsableAnimals(items.resources as Clip[]);
-    const randomIndex = Math.floor(Math.random() * usableAnimals.length);
-    const randomAnimal = usableAnimals[randomIndex];
-    clip.path = randomAnimal;
+    // change the state of the path to used
+    const operations: PatchOperation[] = [
+        { op: 'replace', path: '/state', value: 'used' }
+    ];
+    await cosmosDBClient.paths_container.item(clip.path, clip.path).patch(operations);
 
     // add the clip to the database
-    await cosmosDBClient.container.items.upsert(clip);
+    await cosmosDBClient.clips_container.items.upsert(clip);
 
     context.log(`New clip created...`);
     return { jsonBody: clip };
 };
-
-function readAnimalsJsonFileSync() {
-    const animals = fs.readFileSync("src/helpers/animals.json", 'utf8');
-    return JSON.parse(animals);
-}
-
-function getUsableAnimals(clips: Clip[]) {
-    const animals = readAnimalsJsonFileSync();
-
-    return animals.filter(animal => {
-        return clips.every(item => item.path !== animal);
-    });
-}
 
 app.http('addClip', {
     methods: ['POST'],
