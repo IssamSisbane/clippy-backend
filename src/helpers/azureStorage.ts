@@ -51,7 +51,7 @@ export async function uploadBlob(
         const blockBlobClient = await containerClient.getBlockBlobClient(fileName);
         const sas_url = await blockBlobClient.uploadData(blob);
 
-        const sasToken = await getBlobSasUri(containerClient, fileName, serviceName, serviceKey);
+        const sasToken = await getBlobSasUri(containerClient, fileName, serviceName, serviceKey, ttl);
         console.log(`SAS token for blob is: ${sasToken}`);
 
         return sasToken;
