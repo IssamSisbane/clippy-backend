@@ -1,5 +1,5 @@
 import { app, HttpRequest, HttpResponseInit, InvocationContext } from "@azure/functions";
-import CosmosDBClient from "../cosmosDBClient";
+import CosmosDBClient from "../helpers/cosmosDBClient";
 
 export async function getClip(request: HttpRequest, context: InvocationContext): Promise<HttpResponseInit> {
     context.log(`Starting the clip finding...`);
@@ -15,7 +15,7 @@ export async function getClip(request: HttpRequest, context: InvocationContext):
     }
 
     const cosmosDBClient = new CosmosDBClient();
-    const result = await cosmosDBClient.container.items.query('SELECT * FROM c WHERE c.path = "' + path + '"').fetchAll();
+    const result = await cosmosDBClient.clips_container.items.query('SELECT * FROM c WHERE c.path = "' + path + '"').fetchAll();
 
     if (result.resources.length === 0) {
         return {
