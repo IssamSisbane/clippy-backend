@@ -7,6 +7,7 @@ export async function uploadFileClip(request: HttpRequest, context: InvocationCo
 
     const formData: any = await request.formData();
     const fileToUpload = formData.get('file') as File;
+    const ttl = formData.get('ttl') as number;
 
     console.log(fileToUpload.name)
 
@@ -21,7 +22,8 @@ export async function uploadFileClip(request: HttpRequest, context: InvocationCo
         AZURE_STORAGE_ACCOUNT_KEY,
         fileToUpload.name,
         containerName,
-        fileContentsBuffer
+        fileContentsBuffer,
+        ttl
     );
 
     context.log(result);

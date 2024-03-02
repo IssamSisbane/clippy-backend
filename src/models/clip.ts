@@ -1,7 +1,10 @@
+const hour = 60 * 60;
+
 export enum TttEnum {
-    Day = "1d",
-    Week = "7d",
-    Month = "30d",
+    OneHour = 1 * hour,
+    SixHours = 6 * hour,
+    TwelveHours = 12 * hour,
+    TwentyFourHours = 24 * hour,
 }
 
 export interface Clip {
@@ -9,12 +12,13 @@ export interface Clip {
     title: string,
     content: string,
     file: string,
-    timeToLive: TttEnum,
+    file_extension: string,
+    ttl: TttEnum,
 }
 
 export function verifyClip(object: any): boolean {
     return object.path !== undefined
         && object.title !== undefined
         && object.content !== undefined
-        && object.timeToLive !== undefined;
+        && object.ttl !== undefined;
 }

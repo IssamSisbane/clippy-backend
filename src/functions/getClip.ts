@@ -17,6 +17,8 @@ export async function getClip(request: HttpRequest, context: InvocationContext):
     const cosmosDBClient = new CosmosDBClient();
     const result = await cosmosDBClient.clips_container.items.query('SELECT * FROM c WHERE c.path = "' + path + '"').fetchAll();
 
+
+
     if (result.resources.length === 0) {
         return {
             status: 404,
@@ -24,10 +26,19 @@ export async function getClip(request: HttpRequest, context: InvocationContext):
         };
     }
 
-    context.log(`Clip found...`);
+    // verify if the clip isn't expired
+    const foundClip = result.resources[0];
+    const nowInSeconds = Math.floor(Date.now() / 1000);
+
+    if (foundClip.ttl + foundClip._ts < nowInSeconds) {
+        return {
+            status: 404,
+            body: "Clip expired"
+        };
+    }
 
     return {
-        jsonBody: result.resources[0]
+        jsonBody: foundClip
     };
 };
 
