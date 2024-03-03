@@ -3,3 +3,7 @@ export interface Path {
     emoji: string;
     state: string;
 }
+
+export function verifyPath(object: any): boolean {
+    return object.id != undefined && object.emoji != undefined;
+}
