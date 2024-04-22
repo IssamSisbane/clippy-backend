@@ -17,9 +17,44 @@ The goal of this project is to create a website that allows for the ephemeral sh
 * `CosmosDB`
 * `Azure Key Vault`
 * `Typescript`
-
+* 
 ## Setup
+
 [Develop Locally](https://learn.microsoft.com/en-us/azure/azure-functions/functions-develop-local)
+
+Make sure to install the dependencies:
+
+```bash
+# npm
+npm install
+
+# pnpm
+pnpm install
+
+# yarn
+yarn install
+
+# bun
+bun install
+```
+
+## Development Server
+
+Start the development server on `http://localhost:7071`:
+
+```bash
+# npm
+npm run start
+
+# pnpm
+pnpm run start
+
+# yarn
+yarn start
+
+# bun
+bun run start
+```
 
 ## Deployment
 [Deploy to Azure](https://microsoft.github.io/MicrosoftCloud/tutorials/docs/Automate-Data-Reporting-with-Azure-Functions-and-Power-Automate/Create-and-Deploy-the-Function-App-to-Azure/)
